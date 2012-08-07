@@ -1,5 +1,34 @@
 .container
-    #clock.span4.offset4
+    .hero-unit
+        h1 Wakenya Tuongee vs Uwezo Tarriff
+        p This is a simple comparision between the two tariffs. Click the stop watch and see the difference in cost.
+    .row
+        #stopwatch.timer-container
+            .timer
+                .cell
+                    .numbers.tenhour.moveten 0 1 2 3 4 5 6 7 8 9
+                .cell
+                    .numbers.hour.moveten 0 1 2 3 4 5 6 7 8 9
+                .cell.divider
+                    .numbers :
+                .cell
+                    .numbers.tenminute.movesix 0 1 2 3 4 5 6
+                .cell
+                    .numbers.minute.moveten 0 1 2 3 5 6 7 8 9
+                .cell.divider
+                    .numbers :
+                .cell
+                    .numbers.tensecond.movesix 0 1 2 3 4 5 6
+                .cell
+                    .numbers.second.moveten 0 1 2 3 4 5 6 7 8 9
+                .cell.divider
+                    .numbers :
+                .cell
+                    .numbers.millisecond.moveten 0 1 2 3 4 5 6 7 8 9
+                .cell
+                    .numbers.tenmillisecond.moveten 0 1 2 3 4 5 6 7 8 9
+                .cell
+                    .numbers.hundredmillisecond.moveten 0 1 2 3 4 5 6 7 8 9
 
 script(type='text/javascript', src='/javascripts/jquery.1.7.2.js')
 script(type='text/javascript', src='/javascripts/jquery.stopwatch.js')
