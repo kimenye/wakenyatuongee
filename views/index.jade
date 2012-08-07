@@ -1,9 +1,31 @@
 .container
-  .hero-unit
-    h1 Wakenya Tuongee?
-    p  This is my little investigation into whether Safaricom's Wakenya Tuongee promotion is worth it. Views expressed
-       |   here are my own.
-    p
+  .row
+    .hero-unit
+      h1 Wakenya Tuongee?
+      p  This is my little investigation into whether Safaricom's Wakenya Tuongee promotion is worth it. Views expressed
+         |   here are my own. Deal or Scam?
+
+      |  <p>I use an android phone and I exported my call log using this <a href="http://goo.gl/sGli9">application</a>.
+      |  I then convered the CSV file into JSON using <a href="http://shancarter.com/data_converter/">Mr Data Converter</a>.</p>
+.container
+  .row
+      h2 My Call Log&nbsp;
+        small(data-bind="text: duration")
+      .btns
+        a.btn(data-bind="click: $root.toggle(1)") Outgoing
+        a.btn(data-bind="click: $root.toggle(2)") Incoming
+        a.btn(data-bind="click: $root.toggle(0)") All
+  .row
+    br
+  .row
+      table.table.table-bordered
+        thead
+          th Type
+          th Duration (s)
+        tbody(data-bind="foreach: filteredCalls")
+          tr
+            td(data-bind="text: type")
+            td(data-bind="text: duration")
 
 
 script(type='text/javascript', src='/javascripts/jquery.1.7.2.js')
