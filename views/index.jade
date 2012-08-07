@@ -7,13 +7,18 @@
 
       |  <p>I use an android phone and I exported my call log using this <a href="http://goo.gl/sGli9">application</a>.
       |  I then convered the CSV file into JSON using <a href="http://shancarter.com/data_converter/">Mr Data Converter</a>.</p>
+
+      button#table.btn(data-bind="click: toggle") Table
+      &nbsp;
+      button#graph.btn(data-bind="click: toggle") Graphs
+
 .container
   .row
       h2 My Call Log&nbsp;
         small(data-bind="text: duration")
   .row
     br
-  .row
+  .row(data-bind="visible: tableVisible")
       table.table.table-bordered
         thead
           th Date

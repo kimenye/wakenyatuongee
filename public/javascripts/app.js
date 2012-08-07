@@ -14,6 +14,7 @@ function App() {
     var self = this;
     this.calls = ko.observableArray([]);
     this.mode = ko.observable(1);
+    this.view = ko.observable("table")
 
     this.filteredCalls = ko.computed(function() {
         var _mode = this.mode();
@@ -22,10 +23,9 @@ function App() {
         });
     },this);
 
-    this.toggle = function(value) {
-//        this.mode(value);
-        console.log("Mode should be " + value);
-    };
+    this.tableVisible = ko.computed(function() {
+        return this.view() == "table";
+    }, this);
 
     this.duration = ko.computed(function() {
 
@@ -50,7 +50,13 @@ function App() {
         }
     });
 
+    self.toggle = function(value, event) {
+        self.view(event.target.id);
+    }
+
 }
 
-ko.applyBindings(new App());
+$(function() {
+    ko.applyBindings(new App());
+});
 
