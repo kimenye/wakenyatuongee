@@ -27,3 +27,7 @@ body {
 .navbar-fixed-top .brand:hover {
     text-decoration: none;
 }
+
+.graph {
+    padding-top: 50px;
+}
