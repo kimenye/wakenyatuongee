@@ -46,6 +46,10 @@ app.get('/log', function (req, res) {
     res.end('\n');
 });
 
+app.get('/compare', function(req, res) {
+    res.render('compare', { title:'Wakenya Tuongee vs Tuongee', layout:'layout' })
+})
+
 app.listen(3001, function () {
     console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
 });

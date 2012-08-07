@@ -21,19 +21,26 @@
   .row(data-bind="visible: tableVisible")
       table.table.table-bordered
         thead
-          th Date
-          //th Type
+          th Start
+          th End
           th Duration (s)
+          th Uwezo
+          th Uwezo (Kshs)
+          th Tuongee
         tbody(data-bind="foreach: filteredCalls")
           tr
-            td(data-bind="text: callDate")
-            //td(data-bind="text: type")
+            td(data-bind="text: startTime.toString('HH:mm:ss')")
+            td(data-bind="text: endTime().toString('HH:mm:ss')")
             td(data-bind="text: duration")
+            td(data-bind="text: isInUwezoTimeband()")
+            td(data-bind="text: uwezoCost()")
+            td(data-bind="text: isInTuongeeTimeband()")
 
 
 script(type='text/javascript', src='/javascripts/jquery.1.7.2.js')
 script(type='text/javascript', src='/javascripts/js.class.min.js')
 script(type='text/javascript', src='/javascripts/bootstrap.min.js')
+script(type='text/javascript', src='/javascripts/date.js')
 script(type='text/javascript', src='/javascripts/underscore-min.js')
 script(type='text/javascript', src='/javascripts/knockout.js')
 script(type='text/javascript', src='/javascripts/app.js')
