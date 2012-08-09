@@ -54,6 +54,10 @@ app.get('/graph', function(req, res) {
     res.render('graph', { title: 'Comparision Chart', layout: 'layout'});
 });
 
+app.get('/test', function(req, res) {
+    res.render('test', { title: 'Tests', layout: 'test_layout'});
+});
+
 app.listen(3001, function () {
     console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
 });
