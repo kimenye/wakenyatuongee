@@ -22,10 +22,10 @@ $(function() {
                         var x = (new Date()).getTime(), // current time
                             y = Math.random();
                         series.addPoint([x, y], true, true);
+                        series2.addPoint([x, y+20], true, true);
 
 
-
-                    }, 10000);
+                    }, 1000);
                 }
             }
         },
