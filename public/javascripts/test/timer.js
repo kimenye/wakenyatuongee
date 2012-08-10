@@ -8,7 +8,6 @@
 
 describe("Charging Rules:", function() {
 
-
     beforeEach(function() {
     });
 
@@ -40,7 +39,7 @@ describe("Charging Rules:", function() {
         var _time = Date.today().set({ hour: 6, minute: 0, second: 59});
         expect(inTuongeeTimeband(_time)).toBe(true);
 
-        _time = Date.today().set({ hour: 19, minute: 0, second: 56 });
+        _time = Date.today().set({ hour: 18, minute: 0, second: 1 });
         expect(inTuongeeTimeband(_time)).toBe(false);
     });
 
@@ -62,6 +61,22 @@ describe("Charging Rules:", function() {
         expect(uwezoStart.getSeconds()).toEqual(0);
     });
 
+    it("Returns the tuongee start on a particular day", function() {
+        var date = Date.today().set({
+            millisecond: 500,
+            second: 30,
+            minute: 45,
+            hour: 18,
+            day: 15,
+            month: 6,
+            year: 2008
+        });
+
+        var tStart = tuongeeStartOnDay(date);
+        expect(tStart.getDate()).toEqual(15);
+        expect(tStart.getHours()).toEqual(6);
+    });
+
 
     it("If a call is wholly in Uwezo timeband then its duration is equal to the uwezo duration", function() {
         var start = Date.today().set({ hour: 8, minute: 30, second: 0 });
@@ -71,6 +86,19 @@ describe("Charging Rules:", function() {
         var uwezo_duration = call.durationInUwezo();
 
         expect(duration).toEqual(uwezo_duration);
+
+        var other_end = Date.today().set({ hour: 23, minute: 15, second: 0 });
+        call = new Call(start, other_end);
+        expect(call.duration()).not.toEqual(call.durationInUwezo());
+    });
+
+
+    it("If a call is wholly in Tuongee timeband then its duration is equal to the tuongee duration", function() {
+        var start = Date.today().set({ hour: 8, minute: 30, second: 0 });
+        var end = Date.today().set({ hour: 8, minute: 40, second: 0 });
+        var call = new Call(start, end);
+
+        expect(call.duration()).toEqual(call.durationInTuongee());
 
         var other_end = Date.today().set({ hour: 23, minute: 15, second: 0 });
         call = new Call(start, other_end);

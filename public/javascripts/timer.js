@@ -16,36 +16,46 @@ var Unit = JS.Class({
     }
 });
 
-function inTuongeeTimeband(time) {
+function inBand(time, start, end) {
     var _hour = time.getHours();
-    return _hour >= 6 && _hour < 19;
+    return  _hour >= start && _hour < end;
+}
+
+function inTuongeeTimeband(time) {
+    return inBand(time, 6, 18);
 }
 
 function inUwezoTimeBand(time) {
-    var _hour = time.getHours();
-    return  _hour >= 8 && _hour < 22;
-};
+    return inBand(time, UWEZO_START, UWEZO_END);
+}
 
 //function getStartOfDayForTime(time) {
 //    return Date.today().set({ day: time.getDate(), month: time.getMonth(), year: time.getYear() }).clearTime();
 //}
 
-var UWEZO_START = Date.today().set({hour: 8, minute: 0, second: 0});
-var UWEZO_END = Date.today().set({hour: 23, minute: 0, second: 0});
+var UWEZO_START = 8;
+var UWEZO_END = 22;
+var TUONGEE_START = 6;
+var TUONGEE_END = 18;
 
 
-function uwezoStartOnDay (time) {
+function timeBandOnDay(time, hour, minute) {
     var _res = new Date(time);
     _res = _res.clearTime();
-    _res.set({ hour: 8, minute: 0, second: 0});
+    _res.set({ hour: hour, minute: minute, second: 0});
     return _res;
 }
 
+function uwezoStartOnDay (time) {
+    return timeBandOnDay(time, UWEZO_START, 0);
+}
+
 function uwezoEndOfDay(time) {
-    var _res = new Date(time);
-    _res = _res.clearTime();
-    _res.set({ hour: 22, minute: 0, second: 0});
-    return _res;
+    return timeBandOnDay(time, UWEZO_END, 0);
+}
+
+function tuongeeStartOnDay (time) {
+    return timeBandOnDay(time, TUONGEE_START, 0);
 }
 
 function diff(start, end) {
@@ -81,31 +91,53 @@ var Call = JS.Class({
             return diff(this.startTime, this.bestEndTime());
         }
 
-//        this.whollyInBand = function(t)
+        this.whollyInBand = function(startHour, endHour) {
+            return inBand(this.startTime, startHour, endHour) && inBand(this.bestEndTime(), startHour, endHour);
+        }
+
+        this.startsOutside = function(startHour, endHour) {
+            return !inBand(this.startTime, startHour, endHour) && inBand(this.bestEndTime(), startHour, endHour);
+        }
+
+        this.endsOutside = function(startHour, endHour) {
+            return inBand(this.startTime, startHour, endHour) && !inBand(this.bestEndTime(), startHour, endHour);
+        }
+
+        this.startsBeforeAndEndsAfter = function(startHour, endHour) {
+            return !inBand(this.startTime, startHour, endHour) && !inBand(this.bestEndTime(), startHour, endHour);
+        }
 
         this.durationInUwezo = function() {
-            if (inUwezoTimeBand(this.startTime) && inUwezoTimeBand(this.bestEndTime())) {
+            return this.durationInBand(UWEZO_START, UWEZO_END);
+        }
+
+        this.durationInTuongee = function() {
+            return this.durationInBand(UWEZO_START, UWEZO_END);
+        }
+
+        this.durationInBand = function(startHour, endHour) {
+            if(this.whollyInBand(startHour, endHour))
                 return this.duration();
-            }
             else
             {
-                if (!inUwezoTimeBand(this.startTime) && inUwezoTimeBand(this.bestEndTime())) {
-                    //if we dont start then we need to get the time from be start of the uwezo timeband
-                    var _uStart = uwezoStartOnDay(this.startTime);
-                    return diff(_uStart, this.bestEndTime());
+                if (this.startsOutside(startHour, endHour)) {
+                    var _start = timeBandOnDay(this.startTime, startHour, 0);
+                    return diff(_start, this.bestEndTime());
                 }
-                else if (inUwezoTimeBand(this.startTime) && !inUwezoTimeBand(this.bestEndTime())){
-                    var _uEnd = uwezoEndOfDay(this.bestEndTime());
-                    return diff(_uEnd, this.bestEndTime());
-                }else if (!inUwezoTimeBand(this.startTime) && !inUwezoTimeBand(this.bestEndTime())) {
 
-                    var _uStart = uwezoStartOnDay(this.startTime);
-                    var _uEnd = uwezoEndOfDay(this.bestEndTime());
+                else if (this.endsOutside(startHour, endHour)) {
+                    var _end = timeBandOnDay(this.bestEndTime(), endHour, 0);
+                    return diff(_end, this.bestEndTime());
+                }
+                else if (this.startsBeforeAndEndsAfter(startHour, endHour)) {
+                    var start = timeBandOnDay(this.startTime, startHour, 0);
+                    var end = timeBandOnDay(this.bestEndTime(), endHour, 0);
 
-                    if (this.startTime.compareTo(_uStart) < 1 && this.bestEndTime().compareTo(_uEnd) > 0 ) {
+                    if (this.startTime.compareTo(start) < 1 && this.bestEndTime().compareTo(end) > 0 ) {
                         return (22 - 8) * 3600;
                     }
                     return 0;
+
                 }
             }
         }
