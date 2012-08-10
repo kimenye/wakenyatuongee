@@ -34,5 +34,8 @@ body {
     font-family: Arial, Helvetica, sans-serif;
 }
 
+.bordered{
+    border: 1px solid #DDD;
+}
 /*#chart_container {*/
 /*}*/

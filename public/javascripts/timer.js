@@ -29,6 +29,10 @@ function inUwezoTimeBand(time) {
     return inBand(time, UWEZO_START, UWEZO_END);
 }
 
+function isNotEmpty(time) {
+    return !_.isUndefined(time) && time != null;
+}
+
 
 var UWEZO_START = 8;
 var UWEZO_END = 22;
@@ -52,11 +56,19 @@ function perSecondCost(duration, rate) {
     return (duration * rate / 60);
 }
 
+function formatCurrency(amount) {
+    return accounting.formatMoney(amount, "Ksh", 2, ",", ".");
+}
+
+function formatDuration(duration) {
+    return new TimeSpan(duration * 1000).toString();
+}
+
 function stepWiseCost(duration) {
     if (duration <= 60)
         return cost(duration, 4, true);
     else if(duration > 60 & duration <= 120) {
-        var _diff = 120 - 60;
+        var _diff = duration - 60;
         return stepWiseCost(60) + cost(_diff, 3, true);
     }
     else if(duration > 120 & duration <= 180) {
@@ -142,7 +154,6 @@ var Call = JS.Class({
                         return (22 - 8) * 3600;
                     }
                     return 0;
-
                 }
             }
         }
@@ -192,8 +203,13 @@ var Call = JS.Class({
             return this.hasValidEndTime() ? this.endTime : new Date();
         }
 
+        this.isValid = function() {
+            return isNotEmpty(this.startTime);
+        }
+
+
         this.hasValidEndTime = function() {
-            return !_.isUndefined(this.endTime) && this.endTime != null;
+            return isNotEmpty(this.endTime);
         }
     }
 });

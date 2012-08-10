@@ -153,6 +153,10 @@ describe("Charging Rules:", function() {
         var call = new Call(start, end);
         expect(call.tuongeeCost()).toEqual(4);
 
+        end = Date.today().set({ hour: 8, minute: 1, second: 30 });
+        call.endTime = end;
+        expect(call.tuongeeCost()).toEqual(5.50);
+
         end = Date.today().set({ hour: 8, minute: 2, second: 0});
         call.endTime = end;
 
@@ -184,6 +188,15 @@ describe("Charging Rules:", function() {
         expect(call.duration()).toBe(300);
         expect(call.tuongeeCost()).toEqual(20);
     });
+
+    it("Correctly formats the cost of a call", function() {
+       expect(formatCurrency(5)).toEqual("Ksh5.00")
+    });
+
+    it("Correctly formats the duration of a call", function() {
+        expect(formatDuration(5)).toEqual("0:00:05");
+        expect(formatDuration(300)).toEqual("0:05:00");
+    })
 });
 
 

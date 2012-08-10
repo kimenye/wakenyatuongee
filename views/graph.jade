@@ -1,13 +1,66 @@
 .container
+    .hero-unit
+          h1 Wakenya Tuongee?
+          p  This is our little investigation into whether Safaricom's Wakenya Tuongee promotion is worth it. Views expressed
+             |   here are our own. Deal or Scam? You decide.
+
     .row
-        //h1 Uwezo vs Wakenya Tuongee Chart
+        .span3
+            img#start(src="images/start.png", data-bind="click: startTimer")
+        #stopwatch.timer-container.span6
+            .timer
+                .cell
+                    .numbers.tenhour.moveten 0 1 2 3 4 5 6 7 8 9
+                .cell
+                    .numbers.hour.moveten 0 1 2 3 4 5 6 7 8 9
+                .cell.divider
+                    .numbers :
+                .cell
+                    .numbers.tenminute.movesix 0 1 2 3 4 5 6
+                .cell
+                    .numbers.minute.moveten 0 1 2 3 5 6 7 8 9
+                .cell.divider
+                    .numbers :
+                .cell
+                    .numbers.tensecond.movesix 0 1 2 3 4 5 6
+                .cell
+                    .numbers.second.moveten 0 1 2 3 4 5 6 7 8 9
+                .cell.divider
+                    .numbers :
+                .cell
+                    .numbers.millisecond.moveten 0 1 2 3 4 5 6 7 8 9
+                .cell
+                    .numbers.tenmillisecond.moveten 0 1 2 3 4 5 6 7 8 9
+                .cell
+                    .numbers.hundredmillisecond.moveten 0 1 2 3 4 5 6 7 8 9
+        .span3
+            img#end(src="images/stop.png", data-bind="click: endTimer")
+    .row
+        br
+        br
+        br
+    .row
+        .span3
+            h1 Uwezo Tariff
+            h2(data-bind="text: uwezoCost")
+        .span3
+            br
+            h2(data-bind="text: duration")
+        .span3
+            br
+        .span3
+            h1 Tuongee
+            h2(data-bind="text: tuongeeCost")
     .row
         #chart.span9(style="min-width: 500px; height: 400px; margin: 0 auto;")
+    .row
         .span3
+            p By those clever humans at Sprout
 script(type='text/javascript', src='/javascripts/jquery.1.7.2.js')
 script(type='text/javascript', src='/javascripts/js.class.min.js')
 script(type='text/javascript', src='/javascripts/date.js')
 script(type='text/javascript', src='/javascripts/time.js')
+script(type='text/javascript', src='/javascripts/accounting.js')
 script(type='text/javascript', src='/javascripts/highcharts.js')
 script(type='text/javascript', src='/javascripts/highcharts.exporting.js')
 script(type='text/javascript', src='/javascripts/bootstrap.min.js')
