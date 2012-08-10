@@ -199,7 +199,6 @@ describe("Charging Rules:", function() {
     });
 
     it("Correctly breaks down duration and costs into thirty second fragments", function() {
-//        var sta
         var start = Date.today().set({ hour: 8, minute: 0, second: 0});
         var end = Date.today().set({ hour: 8, minute: 1, second: 0});
 
@@ -207,7 +206,6 @@ describe("Charging Rules:", function() {
         var segments = fragment(call, 30);
         expect(segments.length).toEqual(3);
 
-//        expect(se)
         var seg_o = _.first(segments);
         expect(seg_o.idx).toEqual(0);
         expect(seg_o.moment).toEqual(start);

@@ -140,21 +140,6 @@ var Call = JS.Class({
             return diff(this.startTime, this.bestEndTime());
         }
 
-//        this.fragments = function(step) {
-//            var segments = [];
-//            var duration = this.duration()
-//            var steps = _.range(0,duration,step);
-//            steps.push(duration-step);
-//
-//            _.each(steps, function(step, idx) {
-//                var moment = new Date(this.startTime).addSeconds(idx * step);
-//
-//
-//                segments.push(new Band(idx, moment,null,null));
-//            });
-//            return segments;
-//        }
-
         this.whollyInBand = function(startHour, endHour) {
             return inBand(this.startTime, startHour, endHour) && inBand(this.bestEndTime(), startHour, endHour);
         }
