@@ -39,20 +39,20 @@ var TUONGEE_START = 6;
 var TUONGEE_END = 18;
 
 
-function timeBandOnDay(time, hour, minute) {
+function timeBandOnDay(time, hour) {
     var _res = new Date(time);
     _res = _res.clearTime();
-    _res.set({ hour: hour, minute: minute, second: 0});
+    _res.set({ hour: hour, minute: 0, second: 0});
     return _res;
 }
 
-function uwezoStartOnDay (time) {
-    return timeBandOnDay(time, UWEZO_START, 0);
-}
-
-function uwezoEndOfDay(time) {
-    return timeBandOnDay(time, UWEZO_END, 0);
-}
+//function uwezoStartOnDay (time) {
+//    return timeBandOnDay(time, UWEZO_START, 0);
+//}
+//
+//function uwezoEndOfDay(time) {
+//    return timeBandOnDay(time, UWEZO_END, 0);
+//}
 
 function tuongeeStartOnDay (time) {
     return timeBandOnDay(time, TUONGEE_START, 0);
@@ -74,6 +74,13 @@ function perMinuteCost(duration, rate) {
         return (duration / 60) * rate;
     else if (duration % 60 > 0)
         return (Math.floor(duration / 60) + 1) * rate;
+}
+
+function cost(duration, rate, perSecond) {
+    if (perSecond)
+        return perSecondCost(duration,rate);
+    else
+        return perMinuteCost(duration, rate);
 }
 
 
@@ -107,12 +114,12 @@ var Call = JS.Class({
             return !inBand(this.startTime, startHour, endHour) && !inBand(this.bestEndTime(), startHour, endHour);
         }
 
-        this.durationInUwezo = function() {
-            return this.durationInBand(UWEZO_START, UWEZO_END);
-        }
+//        this.durationInUwezo = function() {
+//            return this.durationInBand(UWEZO_START, UWEZO_END);
+//        }
 
         this.durationInTuongee = function() {
-            return this.durationInBand(UWEZO_START, UWEZO_END);
+            return this.durationInBand(TUONGEE_START, TUONGEE_END);
         }
 
         this.durationInBand = function(startHour, endHour) {
@@ -143,15 +150,35 @@ var Call = JS.Class({
         }
 
         this.uwezoCost = function() {
-            var _uwezoDuration = this.durationInUwezo();
+            return this.costInBand(8, 22, true);
+        }
+
+        this.stepWiseCost = function(duration) {
+            if (duration < 60) {
+                return this.costInBand()
+            }
+        }
+
+        this.tuongeeCost = function() {
+//            return this.costInBand(6, 18, true);
+            if (this.whollyInBand(TUONGEE_START, TUONGEE_END)) {
+                return this.stepWiseCost(duration);
+            }
+            else {
+
+            }
+        }
+
+        this.costInBand = function(startHour, endHour, perSecond) {
+            var _bandDuration = this.durationInBand(startHour, endHour);
             var _duration = this.duration();
 
-            if (_duration == _uwezoDuration)
-                return perSecondCost(_uwezoDuration, 4);
-            else if (_uwezoDuration == 0)
-                return perSecondCost(_duration, 2);
+            if (_duration == _bandDuration)
+                return cost(_bandDuration, 4, perSecond);
+            else if (_bandDuration == 0)
+                return cost(_duration, 2, perSecond);
             else
-                return perSecondCost(_uwezoDuration, 4) + perSecondCost(_duration - _uwezoDuration, 2);
+                return cost(_bandDuration, 4, perSecond) + cost(_duration - _bandDuration, 2, perSecond);
         }
 
         this.bestEndTime = function() {

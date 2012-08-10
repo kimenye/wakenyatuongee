@@ -27,22 +27,19 @@ describe("Charging Rules:", function() {
         expect(_call.duration()).toBe(300);
     });
 
-    it("A time is in the uwezo timeband", function() {
+    it("A time is in the bands time", function() {
         var _time = Date.today().set({ hour: 8, minute: 30, second: 0});
         expect(inUwezoTimeBand(_time)).toBe(true);
 
         _time = Date.today().set({ hour: 23, minute: 30, second: 0 });
         expect(inUwezoTimeBand(_time)).toBe(false);
-    });
 
-    it("A time is in the tuongee timeband", function() {
         var _time = Date.today().set({ hour: 6, minute: 0, second: 59});
         expect(inTuongeeTimeband(_time)).toBe(true);
 
         _time = Date.today().set({ hour: 18, minute: 0, second: 1 });
         expect(inTuongeeTimeband(_time)).toBe(false);
     });
-
 
     it("Returns the uwezo start on a particular day", function() {
         // returns Jul 15 2008 18:45:30
@@ -56,86 +53,59 @@ describe("Charging Rules:", function() {
             year: 2008
         });
 
-        var uwezoStart = uwezoStartOnDay(date);
-        expect(uwezoStart.getDate()).toEqual(15);
-        expect(uwezoStart.getSeconds()).toEqual(0);
-    });
-
-    it("Returns the tuongee start on a particular day", function() {
-        var date = Date.today().set({
-            millisecond: 500,
-            second: 30,
-            minute: 45,
-            hour: 18,
-            day: 15,
-            month: 6,
-            year: 2008
-        });
-
-        var tStart = tuongeeStartOnDay(date);
-        expect(tStart.getDate()).toEqual(15);
-        expect(tStart.getHours()).toEqual(6);
+        var start =  timeBandOnDay(date, 6);
+        expect(start.getDate()).toEqual(15);
+        expect(start.getHours()).toEqual(6);
+        expect(start.getMinutes()).toEqual(0);
+        expect(start.getSeconds()).toEqual(0);
     });
 
 
-    it("If a call is wholly in Uwezo timeband then its duration is equal to the uwezo duration", function() {
+    it("If a call is wholly in the timeband then its duration is equal to the duration", function() {
         var start = Date.today().set({ hour: 8, minute: 30, second: 0 });
         var end = Date.today().set({ hour: 8, minute: 40, second: 0 });
         var call = new Call(start, end);
         var duration = call.duration();
-        var uwezo_duration = call.durationInUwezo();
+        var band_duration = call.durationInBand(8,22);
 
-        expect(duration).toEqual(uwezo_duration);
-
-        var other_end = Date.today().set({ hour: 23, minute: 15, second: 0 });
-        call = new Call(start, other_end);
-        expect(call.duration()).not.toEqual(call.durationInUwezo());
-    });
-
-
-    it("If a call is wholly in Tuongee timeband then its duration is equal to the tuongee duration", function() {
-        var start = Date.today().set({ hour: 8, minute: 30, second: 0 });
-        var end = Date.today().set({ hour: 8, minute: 40, second: 0 });
-        var call = new Call(start, end);
-
-        expect(call.duration()).toEqual(call.durationInTuongee());
+        expect(duration).toEqual(band_duration);
 
         var other_end = Date.today().set({ hour: 23, minute: 15, second: 0 });
         call = new Call(start, other_end);
-        expect(call.duration()).not.toEqual(call.durationInUwezo());
+        expect(call.duration()).not.toEqual(call.durationInBand(8, 22));
     });
 
-    it("If a call is not wholly in the uwezo timeband then the uwezo duration is equal to the duration within the timeband", function() {
+    it("If a call is not wholly in the timeband then the timeband duration is equal to the duration within the timeband", function() {
         var start = Date.today().set({ hour: 7, minute: 59, second: 0 });
         var end = Date.today().set({ hour: 8, minute: 1, second: 0 });
 
         var call = new Call(start, end);
         expect(call.duration()).toEqual(120);
-        expect(call.durationInUwezo()).toEqual(60);
+        expect(call.durationInBand(8, 22)).toEqual(60);
 
         start = Date.today().set({ hour: 21, minute: 59, second: 0 });
         end = Date.today().set({ hour: 22, minute: 1, second: 0 });
 
         call = new Call(start, end);
         expect(call.duration()).toEqual(120);
-        expect(call.durationInUwezo()).toEqual(60);
+        expect(call.durationInBand(8, 22)).toEqual(60);
     });
 
-    it ("If a call is completely not in the uwezo timeband then the uwezo duration for that call is zero", function() {
+    it ("If a call is completely not in the timeband then the timeband duration for that call is zero", function() {
         var start = Date.today().set({ hour: 23, minute: 21, second: 0});
         var end = Date.today().set({ hour: 23, minute: 21, second: 30});
 
         var call = new Call(start, end);
 
-        expect(call.durationInUwezo()).toEqual(0);
+        expect(call.durationInBand(8, 22)).toEqual(0);
     });
 
-    it ("If a call starts before the timeband and ends after the timeband then the uwezo timeband duration is the full timeband duration", function() {
+    it ("If a call starts before the timeband and ends after the timeband then the timeband duration is the full timeband duration", function() {
         var start = Date.today().set({ hour: 7, minute: 59, second: 0});
         var end = Date.today().set({ hour: 23, minute: 1, second: 0});
 
         var call = new Call(start, end);
-        expect(call.durationInUwezo()).toEqual(14 * 3600);
+        expect(call.durationInBand(8, 22)).toEqual(14 * 3600);
     });
 
     it("The cost of a call in per second billing is the product of the cost per minute divided by number of seconds", function() {
@@ -150,7 +120,7 @@ describe("Charging Rules:", function() {
         expect(perMinuteCost(61, 4)).toEqual(8);
     });
 
-    it("The cost of a call is equal to the cost of the call multiplied by the duration in the band", function() {
+    it("Correctly calculates the cost of an uwezo call cost", function() {
         var start = Date.today().set({ hour: 8, minute: 30, second: 0 });
         var end = Date.today().set({ hour: 8, minute: 40, second: 0 });
         var call = new Call(start, end);
@@ -176,8 +146,18 @@ describe("Charging Rules:", function() {
         expect(call.uwezoCost()).toEqual(6);
     });
 
-
-//    it("The cost of an off peak call in uwe")
+//    it("Correctly calcuates the cost of a tuongee call", function() {
+//        var start = Date.today().set({ hour: 8, minute: 0, second: 0});
+//        var end = Date.today().set({ hour: 8, minute: 1, second: 0});
+//
+//        var call = new Call(start, end);
+//        expect(call.tuongeeCost()).toEqual(4);
+//
+//        end = Date.today().set({ hour: 8, minute: 2, second: 0});
+//        call.endTime = end;
+//
+//        expect(call.tuongeeCost()).toEqual(7);
+//    });
 });
 
 
