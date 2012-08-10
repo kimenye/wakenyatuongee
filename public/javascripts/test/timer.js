@@ -85,8 +85,8 @@ describe("Charging Rules:", function() {
         expect(call.duration()).toEqual(120);
         expect(call.durationInUwezo()).toEqual(60);
 
-        start = Date.today().set({ hour: 22, minute: 59, second: 0 });
-        end = Date.today().set({ hour: 23, minute: 1, second: 0 });
+        start = Date.today().set({ hour: 21, minute: 59, second: 0 });
+        end = Date.today().set({ hour: 22, minute: 1, second: 0 });
 
         call = new Call(start, end);
         expect(call.duration()).toEqual(120);
@@ -107,7 +107,13 @@ describe("Charging Rules:", function() {
         var end = Date.today().set({ hour: 23, minute: 1, second: 0});
 
         var call = new Call(start, end);
-        expect(call.durationInUwezo()).toEqual(15 * 3600);
+        expect(call.durationInUwezo()).toEqual(14 * 3600);
+    });
+
+    it("The cost of a call is equal to the cost of the call multiplied by the duration in the band", function() {
+        var start = Date.today().set({ hour: 8, minute: 30, second: 0 });
+        var end = Date.today().set({ hour: 8, minute: 40, second: 0 });
+        var call = new Call(start, end);
     });
 });
 

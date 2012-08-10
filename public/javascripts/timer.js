@@ -23,7 +23,7 @@ function inTuongeeTimeband(time) {
 
 function inUwezoTimeBand(time) {
     var _hour = time.getHours();
-    return  _hour >= 8 && _hour < 23;
+    return  _hour >= 8 && _hour < 22;
 };
 
 //function getStartOfDayForTime(time) {
@@ -44,7 +44,7 @@ function uwezoStartOnDay (time) {
 function uwezoEndOfDay(time) {
     var _res = new Date(time);
     _res = _res.clearTime();
-    _res.set({ hour: 23, minute: 0, second: 0});
+    _res.set({ hour: 22, minute: 0, second: 0});
     return _res;
 }
 
@@ -90,7 +90,7 @@ var Call = JS.Class({
                     var _uEnd = uwezoEndOfDay(this.bestEndTime());
 
                     if (this.startTime.compareTo(_uStart) < 1 && this.bestEndTime().compareTo(_uEnd) > 0 ) {
-                        return (23 - 8) * 3600;
+                        return (22 - 8) * 3600;
                     }
                     return 0;
                 }
