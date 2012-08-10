@@ -102,6 +102,30 @@ function partialCallCost(startTime,endTime) {
     return tCall.tuongeeCost();
 }
 
+var Band = JS.Class({
+    construct : function(idx, moment, uwezoCost, tuongeeCost) {
+        this.idx = idx;
+        this.moment = moment;
+        this.uwezoCost = uwezoCost;
+        this.tuongeeCost = tuongeeCost;
+    }
+});
+
+function fragment(call,step) {
+    var segments = [];
+    var duration = call.duration()
+    var steps = _.range(0,duration,step);
+    steps.push(duration-step);
+
+    _.each(steps, function(step, idx) {
+        var moment = new Date(call.startTime).addSeconds(idx * step);
+
+        var c = new Call(call.startTime, moment);
+        segments.push(new Band(idx, moment, c.uwezoCost(), c.tuongeeCost()));
+    });
+    return segments;
+};
+
 var Call = JS.Class({
     construct : function (startTime, endTime) {
         this.startTime = startTime;
@@ -115,6 +139,21 @@ var Call = JS.Class({
             var _bestEndTime = this.bestEndTime();
             return diff(this.startTime, this.bestEndTime());
         }
+
+//        this.fragments = function(step) {
+//            var segments = [];
+//            var duration = this.duration()
+//            var steps = _.range(0,duration,step);
+//            steps.push(duration-step);
+//
+//            _.each(steps, function(step, idx) {
+//                var moment = new Date(this.startTime).addSeconds(idx * step);
+//
+//
+//                segments.push(new Band(idx, moment,null,null));
+//            });
+//            return segments;
+//        }
 
         this.whollyInBand = function(startHour, endHour) {
             return inBand(this.startTime, startHour, endHour) && inBand(this.bestEndTime(), startHour, endHour);
@@ -206,7 +245,6 @@ var Call = JS.Class({
         this.isValid = function() {
             return isNotEmpty(this.startTime);
         }
-
 
         this.hasValidEndTime = function() {
             return isNotEmpty(this.endTime);

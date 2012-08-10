@@ -2,8 +2,7 @@ $(function () {
     function App() {
         var self = this;
         this.inProgress = ko.observable(false);
-//        this.uwezoCost = ko.observable();
-//        this.tuongeeCost = ko.observable();
+        this.chart = null;
         this.timer = null;
         this.startTime = null;
         this.endTime = ko.observable(null);
@@ -57,10 +56,10 @@ $(function () {
             self.endTime(new Date());
         }
 
-        self.pauseAnimation = function() {
+        this.pauseAnimation = function() {
             self.setAnimationState(self.timers(), "paused");
             clearInterval(self.timer);
-            self.paused = true;
+            this.drawChart()
         }
 
         self.stopAnimation = function() {
@@ -83,7 +82,39 @@ $(function () {
 
         this.drawChart = function() {
 
-        }
+
+            //    var chart = new Highcharts.Chart({
+//        chart: {
+//            renderTo: 'chart',
+//            marginRight: 80
+//        },
+//        xAxis: {
+//            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+//        },
+//        yAxis: [{
+//            title: {
+//                text: 'Temperature'
+//            }
+//        }, {
+//            title: {
+//                text: 'Rainfall'
+//            },
+//            opposite: true
+//        }],
+//
+//        series: [{
+//            type: 'line',
+//            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4],
+//            name: 'Temperature'
+//        }, {
+//            type: 'line',
+//            data: [194.1, 95.6, 54.4, 29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4],
+//            name: 'Rainfall',
+//            yAxis: 1
+//        }]
+//    });
+
+        };
 
         this.refreshChart = function() {
 

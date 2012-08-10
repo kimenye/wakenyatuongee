@@ -196,7 +196,32 @@ describe("Charging Rules:", function() {
     it("Correctly formats the duration of a call", function() {
         expect(formatDuration(5)).toEqual("0:00:05");
         expect(formatDuration(300)).toEqual("0:05:00");
-    })
+    });
+
+    it("Correctly breaks down duration and costs into thirty second fragments", function() {
+//        var sta
+        var start = Date.today().set({ hour: 8, minute: 0, second: 0});
+        var end = Date.today().set({ hour: 8, minute: 1, second: 0});
+
+        var call = new Call(start,end);
+        var segments = fragment(call, 30);
+        expect(segments.length).toEqual(3);
+
+//        expect(se)
+        var seg_o = _.first(segments);
+        expect(seg_o.idx).toEqual(0);
+        expect(seg_o.moment).toEqual(start);
+        expect(seg_o.uwezoCost).toEqual(0);
+        expect(seg_o.tuongeeCost).toEqual(0);
+
+        var seg_3 = _.last(segments);
+        expect(seg_3.idx).toEqual(2);
+        expect(seg_3.moment).toEqual(end);
+        expect(seg_3.uwezoCost).toEqual(4);
+        expect(seg_3.tuongeeCost).toEqual(4);
+
+
+    });
 });
 
 
