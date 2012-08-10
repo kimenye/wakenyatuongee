@@ -146,18 +146,44 @@ describe("Charging Rules:", function() {
         expect(call.uwezoCost()).toEqual(6);
     });
 
-//    it("Correctly calcuates the cost of a tuongee call", function() {
-//        var start = Date.today().set({ hour: 8, minute: 0, second: 0});
-//        var end = Date.today().set({ hour: 8, minute: 1, second: 0});
-//
-//        var call = new Call(start, end);
-//        expect(call.tuongeeCost()).toEqual(4);
-//
-//        end = Date.today().set({ hour: 8, minute: 2, second: 0});
-//        call.endTime = end;
-//
-//        expect(call.tuongeeCost()).toEqual(7);
-//    });
+    it("Correctly calcuates the cost of a tuongee call", function() {
+        var start = Date.today().set({ hour: 8, minute: 0, second: 0});
+        var end = Date.today().set({ hour: 8, minute: 1, second: 0});
+
+        var call = new Call(start, end);
+        expect(call.tuongeeCost()).toEqual(4);
+
+        end = Date.today().set({ hour: 8, minute: 2, second: 0});
+        call.endTime = end;
+
+        expect(call.tuongeeCost()).toEqual(7);
+
+        end = Date.today().set({ hour: 8, minute: 3, second: 0});
+        call.endTime = end;
+
+        expect(call.tuongeeCost()).toEqual(9);
+
+        end = Date.today().set({ hour: 8, minute: 4, second: 0});
+        call.endTime = end;
+
+        expect(call.tuongeeCost()).toEqual(10);
+
+        start = Date.today().set({ hour: 5, minute: 59, second: 0});
+        end = Date.today().set({ hour: 6, minute: 4, second: 0});
+        call.startTime = start;
+        call.endTime = end;
+
+        expect(call.duration()).toBe(300);
+        expect(call.uwezoCost()).toEqual(call.tuongeeCost());
+
+        start = Date.today().set({ hour: 17, minute: 59, second: 0});
+        end = Date.today().set({ hour: 18, minute: 4, second: 0});
+        call.startTime = start;
+        call.endTime = end;
+
+        expect(call.duration()).toBe(300);
+        expect(call.tuongeeCost()).toEqual(20);
+    });
 });
 
 

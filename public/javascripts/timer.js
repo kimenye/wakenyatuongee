@@ -29,9 +29,6 @@ function inUwezoTimeBand(time) {
     return inBand(time, UWEZO_START, UWEZO_END);
 }
 
-//function getStartOfDayForTime(time) {
-//    return Date.today().set({ day: time.getDate(), month: time.getMonth(), year: time.getYear() }).clearTime();
-//}
 
 var UWEZO_START = 8;
 var UWEZO_END = 22;
@@ -46,18 +43,6 @@ function timeBandOnDay(time, hour) {
     return _res;
 }
 
-//function uwezoStartOnDay (time) {
-//    return timeBandOnDay(time, UWEZO_START, 0);
-//}
-//
-//function uwezoEndOfDay(time) {
-//    return timeBandOnDay(time, UWEZO_END, 0);
-//}
-
-function tuongeeStartOnDay (time) {
-    return timeBandOnDay(time, TUONGEE_START, 0);
-}
-
 function diff(start, end) {
     var _diffInMillseconds = end.getTime() - start.getTime();
     return _diffInMillseconds / 1000;
@@ -65,6 +50,23 @@ function diff(start, end) {
 
 function perSecondCost(duration, rate) {
     return (duration * rate / 60);
+}
+
+function stepWiseCost(duration) {
+    if (duration <= 60)
+        return cost(duration, 4, true);
+    else if(duration > 60 & duration <= 120) {
+        var _diff = 120 - 60;
+        return stepWiseCost(60) + cost(_diff, 3, true);
+    }
+    else if(duration > 120 & duration <= 180) {
+        var _diff = 180 - 120;
+        return stepWiseCost(120) + cost(_diff, 2, true);
+    }
+    else if(duration > 180) {
+        var _diff = duration - 180;
+        return stepWiseCost(180) + cost(_diff, 1, true);
+    }
 }
 
 function perMinuteCost(duration, rate) {
@@ -83,6 +85,10 @@ function cost(duration, rate, perSecond) {
         return perMinuteCost(duration, rate);
 }
 
+function partialCallCost(startTime,endTime) {
+    var tCall = new Call(startTime, timeBandOnDay(startTime, TUONGEE_END));
+    return tCall.tuongeeCost();
+}
 
 var Call = JS.Class({
     construct : function (startTime, endTime) {
@@ -112,14 +118,6 @@ var Call = JS.Class({
 
         this.startsBeforeAndEndsAfter = function(startHour, endHour) {
             return !inBand(this.startTime, startHour, endHour) && !inBand(this.bestEndTime(), startHour, endHour);
-        }
-
-//        this.durationInUwezo = function() {
-//            return this.durationInBand(UWEZO_START, UWEZO_END);
-//        }
-
-        this.durationInTuongee = function() {
-            return this.durationInBand(TUONGEE_START, TUONGEE_END);
         }
 
         this.durationInBand = function(startHour, endHour) {
@@ -153,19 +151,28 @@ var Call = JS.Class({
             return this.costInBand(8, 22, true);
         }
 
-        this.stepWiseCost = function(duration) {
-            if (duration < 60) {
-                return this.costInBand()
-            }
+        this.partialUwezoCost = function(startTime, endTime) {
+            var _duration = diff(startTime, endTime);
+            return cost(_duration, 4, true);
         }
 
         this.tuongeeCost = function() {
-//            return this.costInBand(6, 18, true);
             if (this.whollyInBand(TUONGEE_START, TUONGEE_END)) {
-                return this.stepWiseCost(duration);
+                return stepWiseCost(this.duration());
             }
             else {
+                if (!inBand(this.startTime, TUONGEE_START, TUONGEE_END)) {
+                    return this.uwezoCost();
+                }
+                else if (!inBand(this.bestEndTime(), TUONGEE_START, TUONGEE_END)) {
+                    var _tuongeeDuration = this.durationInBand(TUONGEE_START, TUONGEE_END);
 
+                    var diff = this.duration() - _tuongeeDuration;
+                    var tCost = stepWiseCost(diff);
+
+                    tCost += this.partialUwezoCost(timeBandOnDay(this.startTime, TUONGEE_END), this.endTime);
+                    return tCost;
+                }
             }
         }
 
@@ -186,7 +193,7 @@ var Call = JS.Class({
         }
 
         this.hasValidEndTime = function() {
-            return !_.isUndefined(this.endTime) && endTime != null;
+            return !_.isUndefined(this.endTime) && this.endTime != null;
         }
     }
 });
