@@ -53,6 +53,19 @@ function diff(start, end) {
     return _diffInMillseconds / 1000;
 }
 
+function perSecondCost(duration, rate) {
+    return (duration * rate / 60);
+}
+
+function perMinuteCost(duration, rate) {
+    if (duration < 60)
+        return rate;
+    else if (duration % 60 == 0)
+        return (duration / 60) * rate;
+    else if (duration % 60 > 0)
+        return (Math.floor(duration / 60) + 1) * rate;
+}
+
 
 var Call = JS.Class({
     construct : function (startTime, endTime) {
@@ -68,7 +81,7 @@ var Call = JS.Class({
             return diff(this.startTime, this.bestEndTime());
         }
 
-
+//        this.whollyInBand = function(t)
 
         this.durationInUwezo = function() {
             if (inUwezoTimeBand(this.startTime) && inUwezoTimeBand(this.bestEndTime())) {
@@ -95,6 +108,18 @@ var Call = JS.Class({
                     return 0;
                 }
             }
+        }
+
+        this.uwezoCost = function() {
+            var _uwezoDuration = this.durationInUwezo();
+            var _duration = this.duration();
+
+            if (_duration == _uwezoDuration)
+                return perSecondCost(_uwezoDuration, 4);
+            else if (_uwezoDuration == 0)
+                return perSecondCost(_duration, 2);
+            else
+                return perSecondCost(_uwezoDuration, 4) + perSecondCost(_duration - _uwezoDuration, 2);
         }
 
         this.bestEndTime = function() {

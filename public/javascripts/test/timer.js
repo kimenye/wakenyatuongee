@@ -110,11 +110,46 @@ describe("Charging Rules:", function() {
         expect(call.durationInUwezo()).toEqual(14 * 3600);
     });
 
+    it("The cost of a call in per second billing is the product of the cost per minute divided by number of seconds", function() {
+        expect(perSecondCost(60,4)).toEqual(4);
+        expect(perSecondCost(240, 4)).toEqual(16);
+        expect(perSecondCost(30, 4)).toEqual(2);
+    });
+
+    it("The cost of a call in per minute billing is the the product of the number of minutes and the rate", function() {
+        expect(perMinuteCost(240, 4)).toEqual(16);
+        expect(perMinuteCost(30, 4)).toEqual(4);
+        expect(perMinuteCost(61, 4)).toEqual(8);
+    });
+
     it("The cost of a call is equal to the cost of the call multiplied by the duration in the band", function() {
         var start = Date.today().set({ hour: 8, minute: 30, second: 0 });
         var end = Date.today().set({ hour: 8, minute: 40, second: 0 });
         var call = new Call(start, end);
+
+        expect(call.uwezoCost()).toEqual(40);
+
+        start = Date.today().set({ hour: 22, minute: 30, second: 0 });
+        end = Date.today().set({ hour: 22, minute: 40, second: 0 });
+        call = new Call(start, end);
+
+        expect(call.uwezoCost()).toEqual(20);
+
+        start = Date.today().set({ hour: 7, minute: 59, second: 0 });
+        end = Date.today().set({ hour: 8, minute: 1, second: 0 });
+        call = new Call(start, end);
+
+        expect(call.uwezoCost()).toEqual(6);
+
+        start = Date.today().set({ hour: 21, minute: 59, second: 0 });
+        end = Date.today().set({ hour: 22, minute: 1, second: 0 });
+        call = new Call(start, end);
+
+        expect(call.uwezoCost()).toEqual(6);
     });
+
+
+//    it("The cost of an off peak call in uwe")
 });
 
 
